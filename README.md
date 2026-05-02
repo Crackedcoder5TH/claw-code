@@ -31,6 +31,10 @@
 Claw Code is the public Rust implementation of the `claw` CLI agent harness.
 The canonical implementation lives in [`rust/`](./rust), and the current source of truth for this repository is **ultraworkers/claw-code**.
 
+> **Vendored into the [Remembrance Ecosystem](https://github.com/Crackedcoder5TH/Void-Data-Compressor)** as the CLI agent harness.
+> This README documents the upstream `ultraworkers/claw-code` project; the Remembrance fork tracks upstream and adds no behavioral changes.
+> Not affiliated with, endorsed by, or maintained by Anthropic.
+
 > [!IMPORTANT]
 > Start with [`USAGE.md`](./USAGE.md) for build, auth, CLI, session, and parity-harness workflows. Make `claw doctor` your first health check after building, use [`rust/README.md`](./rust/README.md) for crate-level details, read [`PARITY.md`](./PARITY.md) for the current Rust-port checkpoint, and see [`docs/container.md`](./docs/container.md) for the container-first workflow.
 
