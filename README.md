@@ -95,3 +95,19 @@ Claw Code is built in the open alongside the broader UltraWorkers toolchain:
 
 - This repository does **not** claim ownership of the original Claude Code source material.
 - This repository is **not affiliated with, endorsed by, or maintained by Anthropic**.
+
+---
+
+## About Remembrance.LLC
+
+This repository is **vendored** into the Remembrance Ecosystem by
+**Remembrance.LLC** as the CLI agent harness. The vendored copy
+tracks upstream `ultraworkers/claw-code` and adds no behavioral
+changes; ownership of the upstream code remains with its original
+authors. Remembrance.LLC is not affiliated with Anthropic or with
+ultraworkers.
+
+---
+
+*© Remembrance.LLC for the Remembrance-Ecosystem packaging.
+Upstream Claw Code retains its original licensing.*
