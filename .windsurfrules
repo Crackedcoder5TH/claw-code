@@ -1,7 +1,1 @@
-# Windsurf pointer
-
-First-read: ECOSYSTEM.md — the 12-repo Remembrance protocol.
-Then AI.md for repo-local instructions.
-
-Both files live at the repo root. The cross-repo protocol in
-ECOSYSTEM.md overrides any per-repo conventions.
+See AGENTS.md.
