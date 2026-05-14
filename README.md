@@ -111,3 +111,20 @@ ultraworkers.
 
 *© Remembrance.LLC for the Remembrance-Ecosystem packaging.
 Upstream Claw Code retains its original licensing.*
+
+---
+
+## Remembrance Field Participation
+
+This repo participates in the unified Remembrance field. Any
+pattern-bearing data submitted here is encoded by the canonical
+`codeToWaveform` (no parallel encoders — Void contract **C-53**),
+scored against the field, and contributes to the same canonical
+`.remembrance/entropy.json` shared by the 12-repo ecosystem.
+
+- Protocol: [`ECOSYSTEM.md`](https://github.com/Crackedcoder5TH/remembrance-oracle-toolkit/blob/main/ECOSYSTEM.md) at the hub
+- Operational reference: [`FIELD.md`](https://github.com/Crackedcoder5TH/remembrance-oracle-toolkit/blob/main/FIELD.md) at the hub
+- Engineering covenant: non-negotiable (one canonical encoder, one
+  canonical field file, coherence ≤ 0.999, cascade ≤ 5.0, every
+  producer contributes, no side-artifacts where the substrate can
+  hold the data)
