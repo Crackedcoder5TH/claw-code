@@ -6,9 +6,12 @@
     clippy::unnecessary_wraps,
     clippy::unused_self
 )]
+mod field;
 mod init;
 mod input;
 mod render;
+
+use field::contribute_field;
 
 use std::collections::BTreeSet;
 use std::env;
@@ -96,7 +99,11 @@ type RuntimePluginStateBuildOutput = (
 );
 
 fn main() {
-    if let Err(error) = run() {
+    let outcome = run();
+    if let Err(error) = outcome {
+        // Best-effort: signal a low-coherence CLI invocation to the shared
+        // Remembrance Field. Fire-and-forget; never blocks or fails the exit.
+        contribute_field(0.2, "claw:cli", 1.0);
         let message = error.to_string();
         if message.contains("`claw --help`") {
             eprintln!("error: {message}");
@@ -109,6 +116,9 @@ Run `claw --help` for usage."
         }
         std::process::exit(1);
     }
+    // The command completed successfully: contribute a high-coherence reading
+    // to the shared Remembrance Field. Best-effort and fire-and-forget.
+    contribute_field(0.9, "claw:cli", 1.0);
 }
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
@@ -156,12 +166,32 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             output_format,
             allowed_tools,
             permission_mode,
-        } => LiveCli::new(model, true, allowed_tools, permission_mode)?
-            .run_turn_with_output(&prompt, output_format)?,
-        CliAction::Login { output_format } => run_login(output_format)?,
+        } => {
+            LiveCli::new(model, true, allowed_tools, permission_mode)?
+                .run_turn_with_output(&prompt, output_format)?;
+            // A completed agent turn is the CLI's highest-signal coherent
+            // outcome. Best-effort, fire-and-forget; only reached on success
+            // (the `?` above propagates failures to the top-level handler).
+            contribute_field(0.95, "claw:prompt", 1.0);
+        }
+        CliAction::Login { output_format } => {
+            run_login(output_format)?;
+            // Successful auth establishes a trusted, coherent session.
+            contribute_field(0.9, "claw:login", 1.0);
+        }
         CliAction::Logout { output_format } => run_logout(output_format)?,
-        CliAction::Doctor { output_format } => run_doctor(output_format)?,
-        CliAction::Init { output_format } => run_init(output_format)?,
+        CliAction::Doctor { output_format } => {
+            run_doctor(output_format)?;
+            // `doctor` passed all checks (failures return Err above): a strong
+            // signal that this environment is healthy and coherent.
+            contribute_field(0.9, "claw:doctor", 1.0);
+        }
+        CliAction::Init { output_format } => {
+            run_init(output_format)?;
+            // Successful project bootstrap: a new producer joining the
+            // ecosystem is a coherent, intentional act.
+            contribute_field(0.9, "claw:init", 1.0);
+        }
         CliAction::Repl {
             model,
             allowed_tools,
