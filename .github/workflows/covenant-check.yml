@@ -1,0 +1,49 @@
+name: Covenant Check (via Oracle)
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  covenant:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: self
+          fetch-depth: 2
+      - uses: actions/checkout@v4
+        with:
+          repository: Crackedcoder5TH/remembrance-oracle-toolkit
+          ref: claude/audit-remembrance-ecosystem-xaaUr
+          path: oracle
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install oracle deps
+        working-directory: oracle
+        run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+      - name: Run covenant checks on the PR diff (fail on breach)
+        working-directory: self
+        run: |
+          node -e "
+          const path = require('path');
+          const cov = require(path.resolve('..','oracle','src','core','covenant-checks'));
+          const fs = require('fs');
+          const { execSync } = require('child_process');
+          let base = 'HEAD~1';
+          try { execSync('git rev-parse HEAD~1', { stdio: 'ignore' }); }
+          catch { base = execSync('git rev-list --max-parents=0 HEAD', { encoding: 'utf-8' }).trim(); }
+          let files = [];
+          try { files = execSync('git diff ' + base + ' HEAD --name-only', { encoding: 'utf-8' }).split('\n').filter(f => /\.(js|jsx|ts|tsx|py)$/.test(f)); } catch { files = []; }
+          let breaches = 0;
+          for (const f of files) {
+            if (!fs.existsSync(f)) continue;
+            const r = cov.runAllChecks(fs.readFileSync(f, 'utf-8'), f);
+            if (!r.sealed) { console.log('::warning file=' + f + '::' + JSON.stringify(r.failed)); if (r.severity === 'high') breaches++; }
+          }
+          if (breaches > 0) { console.log('::error::covenant flagged — ' + breaches + ' high-severity breach(es); fix required before merge.'); process.exit(1); }
+          console.log('covenant: ' + files.length + ' files scanned, sealed OK');
+          "
